@@ -5,12 +5,12 @@ import android.graphics.BitmapFactory
 import android.graphics.RectF
 import android.graphics.pdf.PdfDocument
 import androidx.exifinterface.media.ExifInterface
-import org.apache.pdfbox.io.MemoryUsageSetting
-import org.apache.pdfbox.multipdf.PDFMergerUtility
-import org.apache.pdfbox.multipdf.Splitter
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.text.PDFTextStripper
-import org.apache.pdfbox.text.TextPosition
+import com.tom_roush.pdfbox.io.MemoryUsageSetting
+import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
+import com.tom_roush.pdfbox.multipdf.Splitter
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.text.PDFTextStripper
+import com.tom_roush.pdfbox.text.TextPosition
 import java.io.File
 import java.util.zip.ZipFile
 

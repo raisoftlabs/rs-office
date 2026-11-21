@@ -98,7 +98,7 @@ object DeckMaker {
         options: Options,
         out: File,
         onProgress: suspend (Float, String) -> Unit
-    ): Result {
+    ): Result? {
         val pageLines = PdfEngine.pageTexts(pdf)
         if (pageLines.isEmpty()) return null
 
