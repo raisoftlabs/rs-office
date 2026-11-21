@@ -1,0 +1,4 @@
+-keep class com.tom_roush.** { *; }
+-dontwarn com.tom_roush.**
+-keep class com.google.mlkit.** { *; }
+-dontwarn com.google.mlkit.**
