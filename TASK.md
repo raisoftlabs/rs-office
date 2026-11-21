@@ -51,5 +51,8 @@ Sources complete: core (PptxBuilder, PdfEngine, PdfRender, Ocr, DeckMaker,
 Store) + UI (Home, Deck studio, Tools, Viewer, Result, Library, Text, About)
 + App.kt navigation + MainActivity + PPTX unit test + GitHub Actions workflow.
 
-NEXT: push to github.com/raisoftlabs/vellum, watch the workflow go green,
-fix any compile errors CI reports, publish the release APK link.
+DONE: repo pushed, CI green (unit tests + signed APK), release v1.0.3 with
+Vellum-1.0.apk (60.5 MB).
+
+NEXT: user installs the APK and tests: scan -> PDF -> deck, SMART mode on a
+text PDF, merge/split, OCR. Then fix whatever the device test exposes.
