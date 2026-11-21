@@ -116,10 +116,11 @@ fun ViewerScreen(file: File, onBack: () -> Unit) {
         }
     }
 
-    zoomed?.let { index ->
+    val openPage = zoomed
+    if (render != null && openPage != null) {
         ZoomDialog(
             render = render,
-            index = index,
+            index = openPage,
             onClose = { zoomed = null }
         )
     }

@@ -81,14 +81,16 @@ object PdfEngine {
         if (!outDir.exists()) outDir.mkdirs()
         val outputs = ArrayList<File>()
         PDDocument.load(file).use { doc ->
-            val splitter = Splitter()
-            splitter.split(doc).forEachIndexed { index, page ->
-                PDDocument().use { single ->
-                    single.addPage(page)
+            // Splitter hands back one single-page PDDocument per page.
+            val parts = Splitter().split(doc)
+            try {
+                parts.forEachIndexed { index, single ->
                     val out = File(outDir, "${file.nameWithoutExtension}_p${index + 1}.pdf")
                     single.save(out)
                     outputs.add(out)
                 }
+            } finally {
+                parts.forEach { runCatching { it.close() } }
             }
         }
         return outputs
