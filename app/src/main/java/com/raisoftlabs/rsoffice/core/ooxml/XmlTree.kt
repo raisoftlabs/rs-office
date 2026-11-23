@@ -25,7 +25,7 @@ data class XmlDocument(
     val root: XmlNode.Element,
     val preamble: String = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
 ) {
-    fun serialize(): String = preamble + root.serialize()
+    fun serialize(): String = preamble + Xml.serialize(root)
 }
 
 fun XmlNode.Element.child(name: String): XmlNode.Element? =
@@ -75,6 +75,8 @@ fun XmlNode.Element.removeChild(child: XmlNode) {
 private const val DECL = "<?xml"
 
 object Xml {
+
+    internal fun serialize(node: XmlNode): String = node.serialize()
 
     fun parse(source: String): XmlDocument {
         var pos = 0
