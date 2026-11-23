@@ -32,9 +32,9 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   headings, OCR fallback, `Result?` null when no text). Max 80 slides.
 - `core/Store.kt` — SAF import into `getExternalFilesDir/RS Office`, list,
   share, openWith (FileProvider `${applicationId}.fileprovider`).
-- `ui/App.kt` — all navigation: `Route` sealed interface (Result/Deck/Tool/
-  Viewer/Text), bottom tabs Home/Studio/Files/About, ML Kit document-scanner
-  launcher (IntentSender), busy overlay.
+- `ui/App.kt` — all navigation: `Route` sealed interface (Result/ScanReview/
+  Deck/Tool/Viewer/Office/Text), route back-stack, bottom tabs Home/Tools/
+  Files/About, ML Kit document-scanner launcher (IntentSender), busy overlay.
 - `ui/` screens: Home, DeckScreen (studio), ToolScreens (one screen for all
   ToolId tools), ViewerScreen (paged render + zoom), ResultScreen, Library,
   TextScreen (extracted text export), About. Theme = "Slate Pro" (indigo).
@@ -56,9 +56,10 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
 - `ui/OfficeScreen.kt` — one viewer for all three (paper list / table with
   horizontal scroll + PDF export / slide cards)
 
-## Design system (v1.2 — iOS glossy)
-- `ui/Theme.kt` — iOS palette (system blue #0A84FF, bg #F2F2F7 / #000),
-  Word/Excel/PowerPoint brand colors exported for tiles
+## Design system (v2.1 — light glossy / fluid)
+- `ui/Theme.kt` — white-light palette (#FAFBFF bg), original electric blue /
+  violet / mint / amber hues; document-type colors are our own, not MS brand
+  colors; light theme is the default
 - `ui/Design.kt` — AppBackground (2 drifting radial washes), GlassCard
   (vertical gloss + hairline), GradientIcon, SectionHeader, GlossTag,
   `Modifier.bounceClick` (spring squish on press)
@@ -67,6 +68,8 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
 - `ui/HomeScreen.kt` — hero, quick actions, Office apps 2x2, PDF toolkit
   grid, recent files with page thumbnails
 - `ui/ToolsScreen.kt` — every tool grouped Create / Organize / Convert / Read
+- `ui/ScanReviewScreen.kt` — post-scan page review: rotate / reorder / remove
+  pages, rebuilds the PDF at high resolution via `PdfRender` + `imagesToPdf`
 
 ## Decisions
 - 2026-11-23: user rejected the custom look — UI now follows mainstream
@@ -102,7 +105,7 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   review, then broader Office/PDF creation and editing tools.
 
 ## State
-v2.1 in progress: Word/Excel/PowerPoint read-modify-write editors exist but the
-first v2 commit failed CI (OfficeScreen `if` expressions + missing
-`newParagraph`); fixed in this pass. Branding, package and repo renamed. CI is
-the only compile step. Next: professional light UI, scan QA, tool expansion.
+v2.1 shipped to `main`: package/repo renamed, v2 editors compile, light glossy
+fluid reskin done, route back-stack added, credits in About, and post-scan
+page review added. CI is the only compile step. Next: verify page review on a
+device, finish UI polish on secondary screens, then expand Office/PDF tools.

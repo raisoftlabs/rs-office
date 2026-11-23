@@ -50,8 +50,8 @@ document or any PDF into a real editable .pptx. That is RS Office's core.
 v2.1: repository and package renamed to RS Office. Word/Excel/PowerPoint
 read-modify-write editors added in v2; the first v2 CI failed on two
 OfficeScreen expression errors and a missing `DocxEditor.newParagraph`, all
-fixed. CI green again. Current pass: white/light glossy fluid reskin, route
-back-stack, credits in About.
+fixed. CI green again. White/light glossy fluid reskin, route back-stack,
+credits in About, and post-scan page review (rotate / reorder / remove) are in.
 
 DONE: v1.0.6 (`Vellum-1.2.apk`) shipped before the rename; v2.1 source pushed
 to `main`, CI green on `a88abaf`.

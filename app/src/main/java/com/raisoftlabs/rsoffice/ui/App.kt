@@ -68,6 +68,7 @@ import java.io.File
 
 sealed interface Route {
     data class Result(val file: File) : Route
+    data class ScanReview(val file: File) : Route
     data class Deck(val source: File?) : Route
     data class Tool(val id: ToolId) : Route
     data class Viewer(val file: File) : Route
@@ -108,6 +109,10 @@ fun RSOfficeApp() {
 
     fun goBack() {
         routeStack = if (routeStack.size > 1) routeStack.dropLast(1) else emptyList()
+    }
+
+    fun replaceRoute(next: Route) {
+        routeStack = if (routeStack.isEmpty()) listOf(next) else routeStack.dropLast(1) + next
     }
 
     LaunchedEffect(route) {
@@ -173,7 +178,7 @@ fun RSOfficeApp() {
                     busyMessage = null
                     if (file != null) {
                         refreshLibrary()
-                        openRoute(Route.Result(file))
+                        openRoute(Route.ScanReview(file))
                     } else {
                         context.toast("The scan could not be saved.")
                     }
@@ -322,6 +327,15 @@ fun RSOfficeApp() {
                                     context.toast(
                                         if (ok) "Saved to Downloads/RS Office" else "Could not save to Downloads"
                                     )
+                                }
+                            )
+
+                            is Route.ScanReview -> ScanReviewScreen(
+                                file = current.file,
+                                onBack = { goBack() },
+                                onDone = { output ->
+                                    refreshLibrary()
+                                    replaceRoute(Route.Result(output))
                                 }
                             )
 
