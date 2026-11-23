@@ -2,7 +2,11 @@ package com.raisoftlabs.rsoffice.core
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import androidx.exifinterface.media.ExifInterface
 import com.tom_roush.pdfbox.io.MemoryUsageSetting
@@ -127,6 +131,100 @@ object PdfEngine {
         }
         out.outputStream().use { doc.writeTo(it) }
         doc.close()
+    }
+
+    /** Creates a clean, searchable PDF from typed or pasted plain text. */
+    fun textToPdf(text: String, out: File, title: String = "") {
+        val doc = PdfDocument()
+        val margin = 48f
+        val body = Paint().apply {
+            textSize = 11f
+            color = Color.BLACK
+            isAntiAlias = true
+        }
+        val heading = Paint().apply {
+            textSize = 20f
+            color = Color.BLACK
+            typeface = Typeface.DEFAULT_BOLD
+            isAntiAlias = true
+        }
+        val maxWidth = A4_W - margin * 2
+
+        var pageNumber = 1
+        var page = doc.startPage(
+            PdfDocument.PageInfo.Builder(A4_W, A4_H, pageNumber++).create()
+        )
+        var canvas: Canvas = page.canvas
+        var y = margin + 6f
+
+        if (title.isNotBlank()) {
+            wrap(canvas, title, heading, maxWidth).forEach { line ->
+                if (y > A4_H - margin) {
+                    doc.finishPage(page)
+                    page = doc.startPage(
+                        PdfDocument.PageInfo.Builder(A4_W, A4_H, pageNumber++).create()
+                    )
+                    canvas = page.canvas
+                    y = margin
+                }
+                canvas.drawText(line, margin, y, heading)
+                y += 30f
+            }
+            y += 10f
+        }
+
+        val source = if (text.isBlank()) "(empty)" else text.replace("\r\n", "\n")
+        for (raw in source.lineSequence()) {
+            for (line in wrap(canvas, raw.ifBlank { " " }, body, maxWidth)) {
+                if (y > A4_H - margin) {
+                    doc.finishPage(page)
+                    page = doc.startPage(
+                        PdfDocument.PageInfo.Builder(A4_W, A4_H, pageNumber++).create()
+                    )
+                    canvas = page.canvas
+                    y = margin
+                }
+                canvas.drawText(line, margin, y, body)
+                y += 16f
+            }
+        }
+
+        doc.finishPage(page)
+        out.outputStream().use { doc.writeTo(it) }
+        doc.close()
+    }
+
+    private fun wrap(canvas: Canvas, text: String, paint: Paint, maxWidth: Float): List<String> {
+        if (paint.measureText(text) <= maxWidth) return listOf(text)
+        val result = mutableListOf<String>()
+        val words = text.split(Regex("\\s+")).filter { it.isNotBlank() }
+        if (words.isEmpty()) return listOf("")
+        var line = ""
+        for (word in words) {
+            val candidate = if (line.isEmpty()) word else "$line $word"
+            if (paint.measureText(candidate) <= maxWidth) {
+                line = candidate
+            } else {
+                if (line.isNotEmpty()) result += line
+                if (paint.measureText(word) > maxWidth) {
+                    var chunk = ""
+                    for (char in word) {
+                        val next = chunk + char
+                        if (paint.measureText(next) > maxWidth && chunk.isNotEmpty()) {
+                            result += chunk
+                            chunk = char.toString()
+                        } else {
+                            chunk = next
+                        }
+                    }
+                    line = chunk
+                } else {
+                    line = word
+                }
+            }
+        }
+        if (line.isNotEmpty()) result += line
+        return result.ifEmpty { listOf("") }
     }
 
     /** Rebuilds a PDF from rendered pages at a lower resolution (real size win). */

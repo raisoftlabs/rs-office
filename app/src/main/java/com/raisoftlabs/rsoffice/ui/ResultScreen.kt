@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.PhotoCamera
 import androidx.compose.material.icons.rounded.PictureAsPdf
@@ -51,7 +50,6 @@ fun ResultScreen(
     file: File,
     onBack: () -> Unit,
     onOpen: () -> Unit,
-    onMakeDeck: () -> Unit,
     onOcr: () -> Unit,
     onShare: () -> Unit,
     onSave: () -> Unit
@@ -153,24 +151,6 @@ fun ResultScreen(
             }
         }
 
-        item { Spacer(Modifier.height(18.dp)) }
-
-        item {
-            GradientButton(
-                text = "Turn this into a deck",
-                onClick = onMakeDeck,
-                icon = Icons.Rounded.AutoAwesome
-            )
-        }
-
-        item {
-            Text(
-                "RS Office will detect headings and rebuild the pages as editable slides.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 10.dp, start = 4.dp, end = 4.dp)
-            )
-        }
 
         item { Spacer(Modifier.height(10.dp)) }
     }

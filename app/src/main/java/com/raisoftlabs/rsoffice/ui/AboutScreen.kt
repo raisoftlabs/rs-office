@@ -19,7 +19,6 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.Slideshow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -82,7 +81,7 @@ fun AboutScreen() {
                 )
                 Text(
                     "Most office apps ask you to sign in and pay before they do anything useful. " +
-                            "RS Office works offline: scan a page, edit a document, or build a slide deck " +
+                            "RS Office works offline: scan a page, edit a document, or create a PDF " +
                             "right on your phone. Word, spreadsheet and presentation files are edited in place " +
                             "with everything you did not touch preserved exactly as it was.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -97,21 +96,21 @@ fun AboutScreen() {
         item {
             Panel {
                 FeatureRow(
-                    Icons.Rounded.Slideshow,
-                    "Real PowerPoint output",
-                    "Smart slides use the document's own heading sizes, so the deck stays editable."
+                    Icons.Rounded.Description,
+                    "Word, Excel, PowerPoint",
+                    "Open real .docx, .xlsx and .pptx files, edit their content offline and save a copy that other office apps can open."
                 )
                 Spacer(Modifier.height(14.dp))
                 FeatureRow(
                     Icons.Rounded.Image,
-                    "Pixel-perfect option",
-                    "When layout matters more than text, every page becomes a full-bleed slide."
+                    "Scan with page review",
+                    "Camera scans become PDFs you can rotate, reorder and clean up before saving — no automatic deck guessing."
                 )
                 Spacer(Modifier.height(14.dp))
                 FeatureRow(
-                    Icons.Rounded.Description,
-                    "Edit and create",
-                    "Edit Word, Excel and PowerPoint files offline, make slide decks from PDFs, and use the PDF toolkit — merge, split, compress, images to PDF and OCR."
+                    Icons.Rounded.AutoAwesome,
+                    "PDF toolkit",
+                    "Merge, split, compress, export pages to images, turn typed text or photos into PDF, and read text with OCR."
                 )
             }
         }

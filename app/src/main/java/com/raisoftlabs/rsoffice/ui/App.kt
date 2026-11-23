@@ -67,10 +67,9 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 sealed interface Route {
-    object NewDeck : Route
+    object TextToPdf : Route
     data class Result(val file: File) : Route
     data class ScanReview(val file: File) : Route
-    data class Deck(val source: File?) : Route
     data class Tool(val id: ToolId) : Route
     data class Viewer(val file: File) : Route
     data class Office(val file: File) : Route
@@ -223,8 +222,7 @@ fun RSOfficeApp() {
     fun handleTool(id: ToolId) {
         when {
             id == ToolId.SCAN -> startScan()
-            id == ToolId.NEW_DECK -> openRoute(Route.NewDeck)
-            id == ToolId.DECK -> openRoute(Route.Deck(null))
+            id == ToolId.TEXT_TO_PDF -> openRoute(Route.TextToPdf)
             id.isOffice -> openOffice(id)
             else -> openRoute(Route.Tool(id))
         }
@@ -317,11 +315,11 @@ fun RSOfficeApp() {
                         }
                     } else {
                         when (current) {
-                            Route.NewDeck -> NewDeckScreen(
+                            Route.TextToPdf -> TextToPdfScreen(
                                 onBack = { goBack() },
                                 onDone = { output ->
                                     refreshLibrary()
-                                    replaceRoute(Route.Office(output))
+                                    replaceRoute(Route.Result(output))
                                 }
                             )
 
@@ -329,7 +327,6 @@ fun RSOfficeApp() {
                                 file = current.file,
                                 onBack = { goBack() },
                                 onOpen = { openFile(current.file) },
-                                onMakeDeck = { openRoute(Route.Deck(current.file)) },
                                 onOcr = { runOcr(current.file) },
                                 onShare = { Store.share(context, current.file) },
                                 onSave = {
@@ -346,16 +343,6 @@ fun RSOfficeApp() {
                                 onDone = { output ->
                                     refreshLibrary()
                                     replaceRoute(Route.Result(output))
-                                }
-                            )
-
-                            is Route.Deck -> DeckScreen(
-                                initialSource = current.source,
-                                onBack = { goBack() },
-                                onScan = { startScan() },
-                                onOpenFile = { file ->
-                                    refreshLibrary()
-                                    openFile(file)
                                 }
                             )
 

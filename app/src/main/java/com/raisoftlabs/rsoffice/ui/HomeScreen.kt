@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.PhotoCamera
+import androidx.compose.material.icons.rounded.Slideshow
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -152,7 +153,7 @@ fun HomeScreen(
                     )
                     Spacer(Modifier.height(7.dp))
                     Text(
-                        "Scan pages, edit Word, Excel and PowerPoint files, and build real decks from PDFs.",
+                        "Scan pages, edit Word, Excel and PowerPoint files, and save clean PDFs — all offline.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -218,10 +219,10 @@ fun HomeScreen(
                 QuickAction("Scan", Icons.Rounded.PhotoCamera, listOf(Indigo, IndigoDeep), onScan)
                 QuickAction("Import", Icons.Rounded.Upload, listOf(Teal, Indigo), onImportPdf)
                 QuickAction(
-                    "Deck",
-                    Icons.Rounded.AutoAwesome,
-                    listOf(Amber, PptOrange)
-                ) { onTool(ToolId.DECK) }
+                    "Slides",
+                    Icons.Rounded.Slideshow,
+                    listOf(PptOrange, Rose)
+                ) { onOpenOffice(ToolId.SLIDES) }
                 QuickAction("Files", Icons.Rounded.Folder, listOf(Violet, IndigoDeep), onOpenLibrary)
             }
         }
