@@ -48,7 +48,7 @@ fun AboutScreen() {
                     modifier = Modifier
                         .size(72.dp)
                         .clip(RoundedCornerShape(22.dp))
-                        .background(Brush.linearGradient(listOf(Indigo, Violet))),
+                        .background(Brush.linearGradient(listOf(IndigoDeep, Indigo, Violet))),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -158,6 +158,31 @@ fun AboutScreen() {
                 Text(
                     "Native rendering, lazy page loading and on-device processing keep everything smooth " +
                             "even on modest phones.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+
+        item { Spacer(Modifier.height(12.dp)) }
+
+        item {
+            Panel {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Rounded.Description,
+                        null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Icons & credits", style = MaterialTheme.typography.titleMedium)
+                }
+                Text(
+                    "Interface icons are Google Material Icons (Apache License 2.0). " +
+                            "The RS mark and all screen artwork are original. " +
+                            "No Microsoft logos or other third-party copyrighted artwork are used.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)

@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -303,13 +304,19 @@ fun GradientButton(
         modifier = modifier
             .fillMaxWidth()
             .height(54.dp)
+            .shadow(
+                elevation = if (enabled) 8.dp else 0.dp,
+                shape = shape,
+                ambientColor = Indigo.copy(alpha = 0.28f),
+                spotColor = Indigo.copy(alpha = 0.28f)
+            )
             .clip(shape)
             .then(
                 if (enabled) Modifier.bounceClick { onClick() }
                 else Modifier.clickable(enabled = false) {}
             )
             .background(
-                if (enabled) Brush.verticalGradient(listOf(Color(0xFF3DA0FF), Color(0xFF0A6BFF)))
+                if (enabled) Brush.horizontalGradient(listOf(Indigo, IndigoDeep))
                 else SolidColor(MaterialTheme.colorScheme.surfaceVariant)
             )
     ) {

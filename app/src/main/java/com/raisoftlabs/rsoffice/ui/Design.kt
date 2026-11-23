@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -94,6 +95,19 @@ fun AppBackground(content: @Composable BoxScope.() -> Unit) {
                 radius = radius * 0.62f,
                 center = bottomCenter
             )
+            val midCenter = Offset(size.width * (0.72f - 0.08f * drift), size.height * 0.52f)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Teal.copy(alpha = if (light) 0.07f else 0.10f),
+                        Color.Transparent
+                    ),
+                    center = midCenter,
+                    radius = radius * 0.55f
+                ),
+                radius = radius * 0.55f,
+                center = midCenter
+            )
         }
         content()
     }
@@ -142,6 +156,12 @@ fun GlassCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = if (light) 7.dp else 2.dp,
+                shape = shape,
+                ambientColor = Color(0x1A304A80),
+                spotColor = Color(0x1A304A80)
+            )
             .clip(shape)
             .then(
                 if (onClick != null) Modifier.bounceClick { onClick() } else Modifier

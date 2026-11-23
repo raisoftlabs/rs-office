@@ -77,7 +77,7 @@ fun HomeScreen(
                         .size(42.dp)
                         .clip(RoundedCornerShape(13.dp))
                         .background(
-                            Brush.linearGradient(listOf(Color(0xFF3DA0FF), Color(0xFF5E5CE6)))
+                            Brush.linearGradient(listOf(Indigo, Violet))
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -119,7 +119,7 @@ fun HomeScreen(
                     .clip(RoundedCornerShape(28.dp))
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFF1F6BFF), Color(0xFF6C4BFF), Color(0xFF9B4BFF))
+                            listOf(IndigoDeep, Indigo, Violet)
                         )
                     )
             ) {
@@ -152,7 +152,7 @@ fun HomeScreen(
                     )
                     Spacer(Modifier.height(7.dp))
                     Text(
-                        "Scan, read Word, Excel and PowerPoint, and turn any PDF into a real deck.",
+                        "Scan pages, edit Word, Excel and PowerPoint files, and build real decks from PDFs.",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -216,13 +216,13 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 QuickAction("Scan", Icons.Rounded.PhotoCamera, listOf(Indigo, IndigoDeep), onScan)
-                QuickAction("Import", Icons.Rounded.Upload, listOf(Teal, Color(0xFF0A6BFF)), onImportPdf)
+                QuickAction("Import", Icons.Rounded.Upload, listOf(Teal, Indigo), onImportPdf)
                 QuickAction(
                     "Deck",
                     Icons.Rounded.AutoAwesome,
-                    listOf(Amber, Color(0xFFFF6B00))
+                    listOf(Amber, PptOrange)
                 ) { onTool(ToolId.DECK) }
-                QuickAction("Files", Icons.Rounded.Folder, listOf(Violet, Color(0xFF4B48C9)), onOpenLibrary)
+                QuickAction("Files", Icons.Rounded.Folder, listOf(Violet, IndigoDeep), onOpenLibrary)
             }
         }
 
@@ -257,7 +257,7 @@ fun HomeScreen(
                 ) { onOpenOffice(ToolId.SLIDES) }
                 OfficeCard(
                     icon = Icons.Rounded.Description,
-                    colors = listOf(PdfRed, Color(0xFFB01818)),
+                    colors = listOf(PdfRed, Rose),
                     title = "PDF",
                     subtitle = "Open or convert",
                     modifier = Modifier.weight(1f)

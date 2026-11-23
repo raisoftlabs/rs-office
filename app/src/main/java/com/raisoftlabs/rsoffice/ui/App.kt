@@ -88,7 +88,8 @@ fun RSOfficeApp() {
     val scope = rememberCoroutineScope()
 
     var tab by rememberSaveable { mutableStateOf(0) }
-    var route by remember { mutableStateOf<Route?>(null) }
+    var routeStack by remember { mutableStateOf<List<Route>>(emptyList()) }
+    val route = routeStack.lastOrNull()
     var libraryVersion by remember { mutableIntStateOf(0) }
     var busyMessage by remember { mutableStateOf<String?>(null) }
     var files by remember { mutableStateOf<List<File>>(emptyList()) }
@@ -99,6 +100,14 @@ fun RSOfficeApp() {
 
     fun refreshLibrary() {
         libraryVersion++
+    }
+
+    fun openRoute(next: Route) {
+        routeStack = routeStack + next
+    }
+
+    fun goBack() {
+        routeStack = if (routeStack.size > 1) routeStack.dropLast(1) else emptyList()
     }
 
     LaunchedEffect(route) {
@@ -115,7 +124,7 @@ fun RSOfficeApp() {
                 busyMessage = null
                 if (file != null) {
                     refreshLibrary()
-                    route = Route.Result(file)
+                    openRoute(Route.Result(file))
                 } else {
                     context.toast("That PDF could not be read.")
                 }
@@ -144,7 +153,7 @@ fun RSOfficeApp() {
                     if (imported.renameTo(renamed)) renamed else imported
                 }
                 refreshLibrary()
-                route = Route.Office(file)
+                openRoute(Route.Office(file))
             }
         }
     }
@@ -164,7 +173,7 @@ fun RSOfficeApp() {
                     busyMessage = null
                     if (file != null) {
                         refreshLibrary()
-                        route = Route.Result(file)
+                        openRoute(Route.Result(file))
                     } else {
                         context.toast("The scan could not be saved.")
                     }
@@ -208,9 +217,9 @@ fun RSOfficeApp() {
     fun handleTool(id: ToolId) {
         when {
             id == ToolId.SCAN -> startScan()
-            id == ToolId.DECK -> route = Route.Deck(null)
+            id == ToolId.DECK -> openRoute(Route.Deck(null))
             id.isOffice -> openOffice(id)
-            else -> route = Route.Tool(id)
+            else -> openRoute(Route.Tool(id))
         }
     }
 
@@ -222,10 +231,12 @@ fun RSOfficeApp() {
             if (text.isBlank()) {
                 context.toast("No readable text found in this file.")
             } else {
-                route = Route.Text(
-                    title = Store.prettyName(file).ifBlank { "Extracted text" },
-                    body = text,
-                    name = "${file.nameWithoutExtension}_text"
+                openRoute(
+                    Route.Text(
+                        title = Store.prettyName(file).ifBlank { "Extracted text" },
+                        body = text,
+                        name = "${file.nameWithoutExtension}_text"
+                    )
                 )
             }
         }
@@ -233,13 +244,13 @@ fun RSOfficeApp() {
 
     fun openFile(file: File) {
         when (file.extension.lowercase()) {
-            "pdf" -> route = Route.Viewer(file)
-            "docx", "xlsx", "pptx" -> route = Route.Office(file)
+            "pdf" -> openRoute(Route.Viewer(file))
+            "docx", "xlsx", "pptx" -> openRoute(Route.Office(file))
             else -> Store.openWith(context, file)
         }
     }
 
-    BackHandler(enabled = route != null) { route = null }
+    BackHandler(enabled = route != null) { goBack() }
     BackHandler(enabled = route == null && tab != 0) { tab = 0 }
 
     AppBackground {
@@ -301,9 +312,9 @@ fun RSOfficeApp() {
                         when (current) {
                             is Route.Result -> ResultScreen(
                                 file = current.file,
-                                onBack = { route = null },
+                                onBack = { goBack() },
                                 onOpen = { openFile(current.file) },
-                                onMakeDeck = { route = Route.Deck(current.file) },
+                                onMakeDeck = { openRoute(Route.Deck(current.file)) },
                                 onOcr = { runOcr(current.file) },
                                 onShare = { Store.share(context, current.file) },
                                 onSave = {
@@ -316,7 +327,7 @@ fun RSOfficeApp() {
 
                             is Route.Deck -> DeckScreen(
                                 initialSource = current.source,
-                                onBack = { route = null },
+                                onBack = { goBack() },
                                 onScan = { startScan() },
                                 onOpenFile = { file ->
                                     refreshLibrary()
@@ -326,28 +337,28 @@ fun RSOfficeApp() {
 
                             is Route.Tool -> ToolScreen(
                                 tool = current.id,
-                                onBack = { route = null },
+                                onBack = { goBack() },
                                 onScan = { startScan() },
                                 onTextReady = { title, body, name ->
-                                    route = Route.Text(title, body, name)
+                                    openRoute(Route.Text(title, body, name))
                                 }
                             )
 
                             is Route.Viewer -> ViewerScreen(
                                 file = current.file,
-                                onBack = { route = null }
+                                onBack = { goBack() }
                             )
 
                             is Route.Office -> OfficeScreen(
                                 file = current.file,
-                                onBack = { route = null }
+                                onBack = { goBack() }
                             )
 
                             is Route.Text -> TextScreen(
                                 title = current.title,
                                 body = current.body,
                                 suggestedName = current.name,
-                                onBack = { route = null }
+                                onBack = { goBack() }
                             )
                         }
                     }
@@ -369,12 +380,17 @@ fun RSOfficeApp() {
 
 @Composable
 private fun BottomBar(tab: Int, onTab: (Int) -> Unit) {
-    Surface(color = MaterialTheme.colorScheme.surface, shadowElevation = 16.dp) {
+    Surface(
+        color = Color.White,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        shadowElevation = 20.dp
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .height(64.dp),
+                .height(66.dp)
+                .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TabItem(0, "Home", Icons.Rounded.Home, tab, onTab, Modifier.weight(1f))

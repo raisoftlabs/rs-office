@@ -1,12 +1,12 @@
 # TASK — RS Office (Android office studio)
 
-GOAL: Build and ship "RS Office" — an offline Android office app whose core is
-Scan → PDF → real PowerPoint (.pptx), plus PDF tools, OCR and a document
-library. Polished, smooth, zero ads, zero login.
+GOAL: Build and ship "RS Office" — a professional offline Android office suite
+for Word, Excel, PowerPoint and PDF, with scanning, OCR, creation tools and a
+document library. Polished, smooth, zero ads, zero login.
 
 Plan / PRD: `PLAN.md` (to be written after design gate)
 Repo: github.com/raisoftlabs/rs-office (public, Actions → signed release APK)
-Local dir: ~/vellum
+Local dir: ~/rsoffice
 
 ## Study of existing office apps (done 2026-11-21)
 - WPS Office: most complete, but ads + PDF tools paywalled + heavy.
@@ -32,7 +32,7 @@ document or any PDF into a real editable .pptx. That is RS Office's core.
 - [x] Core: OcrEngine.kt (ML Kit text-recognition 16.0.1)
 - [ ] Core: ScanLauncher (ML Kit document-scanner 16.0.0 + fallback picker)
 - [x] UI: Home / Scan / Deck studio / Tools / Viewer / Library / About
-- [x] Icon + dark mode + empty/loading/error states
+- [x] Original Material icons + light glossy theme + empty/loading/error states
 - [x] Unit test: PPTX zip + XML validity (runs in CI)
 - [x] Signed release build: keystore generated with python cryptography
 - [x] Push, watch BOTH green, deliver APK link + install steps
@@ -46,13 +46,17 @@ document or any PDF into a real editable .pptx. That is RS Office's core.
   template (master/layout/theme guaranteed valid), slides composed in Kotlin.
 - Release keystore committed (PKCS12) so every future build updates in place.
 
-## NOW (2026-11-21)
-Sources complete: core (PptxBuilder, PdfEngine, PdfRender, Ocr, DeckMaker,
-Store) + UI (Home, Deck studio, Tools, Viewer, Result, Library, Text, About)
-+ App.kt navigation + MainActivity + PPTX unit test + GitHub Actions workflow.
+## NOW (2026-11-23)
+v2.1: repository and package renamed to RS Office. Word/Excel/PowerPoint
+read-modify-write editors added in v2; the first v2 CI failed on two
+OfficeScreen expression errors and a missing `DocxEditor.newParagraph`, all
+fixed. CI green again. Current pass: white/light glossy fluid reskin, route
+back-stack, credits in About.
 
-DONE: repo pushed, CI green (unit tests + signed APK), release v1.0.3 with
-RS Office-1.0.apk (60.5 MB).
+DONE: v1.0.6 (`Vellum-1.2.apk`) shipped before the rename; v2.1 source pushed
+to `main`, CI green on `a88abaf`.
 
-NEXT: user installs the APK and tests: scan -> PDF -> deck, SMART mode on a
-text PDF, merge/split, OCR. Then fix whatever the device test exposes.
+NEXT: install the next signed APK, then continue step-by-step:
+1. Professional light UI polish across every screen.
+2. Accurate document-scan page review (crop/rotate/order before PDF).
+3. More real Office/PDF creation and editing tools.

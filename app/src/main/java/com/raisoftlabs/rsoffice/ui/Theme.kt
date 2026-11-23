@@ -1,6 +1,5 @@
 package com.raisoftlabs.rsoffice.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -11,40 +10,40 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/* ---- iOS-inspired glossy palette ---------------------------------------- */
-val Indigo = Color(0xFF0A84FF)      // system blue
-val IndigoDeep = Color(0xFF0060DF)
-val Violet = Color(0xFF5E5CE6)
-val Mint = Color(0xFF34C759)
-val Amber = Color(0xFFFF9F0A)
-val Rose = Color(0xFFFF3B30)
-val Teal = Color(0xFF32ADE6)
-val Pink = Color(0xFFFF2D55)
+/* ---- RS Office light palette (original, office-familiar but distinct) ---- */
+val Indigo = Color(0xFF2F6BFF)      // primary electric blue
+val IndigoDeep = Color(0xFF1746C8)
+val Violet = Color(0xFF7B5CFF)
+val Mint = Color(0xFF12A06A)
+val Amber = Color(0xFFF59E0B)
+val Rose = Color(0xFFF04438)
+val Teal = Color(0xFF0EA5A4)
+val Pink = Color(0xFFEC4899)
 
-/* office brand colors — same words people already know */
-val WordBlue = Color(0xFF2B579A)
-val ExcelGreen = Color(0xFF1F7A4D)
-val PptOrange = Color(0xFFD24726)
-val PdfRed = Color(0xFFE5322D)
+/* document-type colors — familiar categories, our own hues */
+val WordBlue = Color(0xFF3B6EF6)
+val ExcelGreen = Color(0xFF12A06A)
+val PptOrange = Color(0xFFF2762E)
+val PdfRed = Color(0xFFE5484D)
 
 private val LightScheme = lightColorScheme(
     primary = Indigo,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFDCEBFF),
-    onPrimaryContainer = Color(0xFF00325C),
+    primaryContainer = Color(0xFFE4EBFF),
+    onPrimaryContainer = Color(0xFF173E9E),
     secondary = Violet,
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFE6E4FF),
-    onSecondaryContainer = Color(0xFF2A2870),
+    secondaryContainer = Color(0xFFEDE8FF),
+    onSecondaryContainer = Color(0xFF3B2B8C),
     tertiary = Mint,
-    background = Color(0xFFF2F2F7),
-    onBackground = Color(0xFF1C1C1E),
+    background = Color(0xFFFAFBFF),
+    onBackground = Color(0xFF151A2E),
     surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF1C1C1E),
-    surfaceVariant = Color(0xFFEAEAF0),
-    onSurfaceVariant = Color(0xFF6E6E73),
-    outline = Color(0xFFD3D3DB),
-    outlineVariant = Color(0xFFE4E4EA),
+    onSurface = Color(0xFF151A2E),
+    surfaceVariant = Color(0xFFEEF1F9),
+    onSurfaceVariant = Color(0xFF606A85),
+    outline = Color(0xFFD7DEEE),
+    outlineVariant = Color(0xFFE8ECF6),
     error = Color(0xFFFF3B30),
     onError = Color.White
 )
@@ -110,7 +109,7 @@ private val RSOfficeTypography = Typography(
 
 @Composable
 fun RSOfficeTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
