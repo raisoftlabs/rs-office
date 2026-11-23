@@ -67,6 +67,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 sealed interface Route {
+    object NewDeck : Route
     data class Result(val file: File) : Route
     data class ScanReview(val file: File) : Route
     data class Deck(val source: File?) : Route
@@ -222,6 +223,7 @@ fun RSOfficeApp() {
     fun handleTool(id: ToolId) {
         when {
             id == ToolId.SCAN -> startScan()
+            id == ToolId.NEW_DECK -> openRoute(Route.NewDeck)
             id == ToolId.DECK -> openRoute(Route.Deck(null))
             id.isOffice -> openOffice(id)
             else -> openRoute(Route.Tool(id))
@@ -315,6 +317,14 @@ fun RSOfficeApp() {
                         }
                     } else {
                         when (current) {
+                            Route.NewDeck -> NewDeckScreen(
+                                onBack = { goBack() },
+                                onDone = { output ->
+                                    refreshLibrary()
+                                    replaceRoute(Route.Office(output))
+                                }
+                            )
+
                             is Route.Result -> ResultScreen(
                                 file = current.file,
                                 onBack = { goBack() },

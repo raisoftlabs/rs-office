@@ -1,6 +1,7 @@
 package com.raisoftlabs.rsoffice.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.ContentCut
@@ -25,6 +26,7 @@ enum class ToolGroup(val title: String) {
 
 enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup) {
     SCAN("Scan", "Camera to PDF", ToolGroup.CREATE),
+    NEW_DECK("New deck", "Title + bullets to PowerPoint", ToolGroup.CREATE),
     DECK("Deck studio", "PDF to PowerPoint", ToolGroup.CREATE),
     IMAGES_TO_PDF("Images to PDF", "Photos to A4", ToolGroup.CREATE),
     MERGE("Merge", "Join PDFs", ToolGroup.ORGANIZE),
@@ -41,6 +43,7 @@ enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup)
 
 fun iconFor(id: ToolId): ImageVector = when (id) {
     ToolId.SCAN -> Icons.Rounded.PhotoCamera
+    ToolId.NEW_DECK -> Icons.Rounded.Add
     ToolId.DECK -> Icons.Rounded.AutoAwesome
     ToolId.IMAGES_TO_PDF -> Icons.Rounded.PictureAsPdf
     ToolId.MERGE -> Icons.Rounded.MergeType
@@ -59,6 +62,7 @@ fun colorsFor(id: ToolId): List<Color> = when (id) {
     ToolId.SLIDES -> listOf(Color(0xFFE9693F), PptOrange)
     ToolId.DECK -> listOf(Amber, Color(0xFFFF6B00))
     ToolId.SCAN -> listOf(Indigo, Color(0xFF0060DF))
+    ToolId.NEW_DECK -> listOf(Violet, Indigo)
     ToolId.COMPRESS -> listOf(Color(0xFF00C7BE), Color(0xFF0A8F88))
     ToolId.MERGE -> listOf(Violet, Color(0xFF4B48C9))
     ToolId.SPLIT -> listOf(Teal, Color(0xFF0A84C9))
