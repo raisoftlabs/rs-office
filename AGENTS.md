@@ -91,6 +91,24 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   size, color, highlight, alignment, lists, undo/redo, save-as-copy.
   Phase 2: tables, images, headers/footers, formulas, charts, slide layouts.
 
+## Decisions (2026-11-23, engine direction)
+- User: "we dont need automated deck generation". Deck studio / PDF→PPT
+  automation and the temporary New Deck maker were removed from the visible
+  tool set. PowerPoint remains as a real .pptx editor.
+- User: "study libreoffice codes and write our own". We study LibreOffice
+  architecture only (clean room): model / shell / filters / OPC parts / undo
+  manager / grab-bag preservation. Do NOT copy MPL/LGPL source, token tables,
+  comments, fixtures or resources. Write original Kotlin from OOXML concepts.
+- New original engine foundation:
+  - `core/ooxml/XmlTree.kt` — small namespace-preserving XML tree/parser.
+  - `core/ooxml/PartStore.kt` — OPC/ZIP part graph; untouched parts copied
+    byte-for-byte, parsed XML cached and dirty-flagged.
+  - `core/edit/UndoStack.kt` — command stack with grouped transactions,
+    mergeable commands, redo and listeners (our own, not SfxUndoManager code).
+  - `app/src/test/.../OfficeEngineFoundationTest.kt` — round-trip/undo tests.
+- Roadmap: migrate DocxEditor → XlsxEditor → PptxEditor onto this foundation,
+  one at a time, keeping CI green after every step.
+
 ## Decisions (2026-11-23, rename + quality directive)
 - User rejected a name-only change: RS Office must be a full offline MS Office
   competitor with professional, polished UX — not a rebranded PDF tool.
@@ -106,6 +124,7 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
 
 ## State
 v2.1 shipped to `main`: package/repo renamed, v2 editors compile, light glossy
-fluid reskin done, route back-stack added, credits in About, and post-scan
-page review added. CI is the only compile step. Next: verify page review on a
-device, finish UI polish on secondary screens, then expand Office/PDF tools.
+fluid reskin, route back-stack, credits, post-scan page review, Text-to-PDF,
+and the original OOXML engine foundation are in. Deck automation removed.
+CI green on `6424d19`. Next: migrate editors onto PartStore/XmlTree/UndoStack
+and continue UI polish.

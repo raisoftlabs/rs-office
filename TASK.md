@@ -56,7 +56,8 @@ credits in About, and post-scan page review (rotate / reorder / remove) are in.
 DONE: v1.0.6 (`Vellum-1.2.apk`) shipped before the rename; v2.1 source pushed
 to `main`, CI green on `a88abaf`.
 
-NEXT: install the next signed APK, then continue step-by-step:
-1. Professional light UI polish across every screen.
-2. Accurate document-scan page review (crop/rotate/order before PDF).
-3. More real Office/PDF creation and editing tools.
+NEXT (user direction): no automated deck generation. Study LibreOffice
+architecture (clean room, no copied source) and build our own OOXML engine:
+1. `PartStore` + `XmlTree` + `UndoStack` foundation — DONE, CI green.
+2. Migrate DocxEditor, then XlsxEditor, then PptxEditor to that foundation.
+3. Continue light glossy UI polish and tool expansion.
