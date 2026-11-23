@@ -43,14 +43,14 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk out/Vellum-1.0.apk
+          cp app/build/outputs/apk/release/app-release.apk out/Vellum-1.2.apk
           ls -lh out
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: vellum-apk
-          path: out/Vellum-1.0.apk
+          path: out/Vellum-1.2.apk
           retention-days: 30
 
       - name: Publish download link
@@ -60,10 +60,12 @@ jobs:
           name: Vellum v1.0.${{ github.run_number }}
           make_latest: true
           body: |
-            **Vellum** — offline office studio.
+            **Vellum 1.2** — offline office suite.
 
-            - Scan documents to PDF with auto edge detection
-            - Turn any PDF or scan into a real, editable PowerPoint (.pptx)
-            - Merge, split, compress, to-images, images-to-PDF, OCR, .docx reader
+            - Read Word (.docx), Excel (.xlsx) and PowerPoint (.pptx) on device
+            - Export any spreadsheet as a clean PDF table
+            - Scan documents to PDF, then typeset them into a real editable deck
+            - PDF toolkit: merge, split, compress, pages to PNG, images to PDF, OCR
+            - New glossy iOS-style UI with spring animations
             - No account, no ads, nothing leaves the phone
-          files: out/Vellum-1.0.apk
+          files: out/Vellum-1.2.apk
