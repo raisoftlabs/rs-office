@@ -65,7 +65,7 @@ fun AboutScreen() {
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    "Documents, decks, done · 1.0",
+                    "Word, Excel, PowerPoint, PDF · 1.2",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -109,8 +109,8 @@ fun AboutScreen() {
                 Spacer(Modifier.height(14.dp))
                 FeatureRow(
                     Icons.Rounded.Description,
-                    "PDF workbench",
-                    "Merge, split, compress, export pages, OCR and read Word files."
+                    "Full office suite",
+                    "Read Word, Excel and PowerPoint files, export sheets as PDF, and run the whole PDF toolkit — merge, split, compress, images and OCR."
                 )
             }
         }

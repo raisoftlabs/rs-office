@@ -1,10 +1,10 @@
 package com.raisoftlabs.vellum.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Description
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.PhotoCamera
+import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,45 +33,59 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.io.File
+
+private val toolkit = listOf(
+    ToolId.MERGE,
+    ToolId.SPLIT,
+    ToolId.COMPRESS,
+    ToolId.TO_IMAGES,
+    ToolId.IMAGES_TO_PDF,
+    ToolId.OCR
+)
 
 @Composable
 fun HomeScreen(
     recent: List<File>,
     onScan: () -> Unit,
     onImportPdf: () -> Unit,
+    onOpenOffice: (ToolId) -> Unit,
     onTool: (ToolId) -> Unit,
     onOpenFile: (File) -> Unit,
     onShareFile: (File) -> Unit,
-    onOpenLibrary: () -> Unit
+    onOpenLibrary: () -> Unit,
+    onOpenTools: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            start = 16.dp, end = 16.dp, top = 6.dp, bottom = 28.dp
-        )
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 30.dp)
     ) {
+        /* ------------------------------ brand ------------------------------ */
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(42.dp)
                         .clip(RoundedCornerShape(13.dp))
-                        .background(Brush.linearGradient(listOf(Indigo, Violet))),
+                        .background(
+                            Brush.linearGradient(listOf(Color(0xFF3DA0FF), Color(0xFF5E5CE6)))
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         "V",
                         color = Color.White,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 19.sp
+                        fontSize = 20.sp
                     )
                 }
                 Spacer(Modifier.width(11.dp))
@@ -81,7 +96,7 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        "Documents, decks, done.",
+                        "Your pocket office",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -89,120 +104,174 @@ fun HomeScreen(
                 IconButton(onClick = onOpenLibrary) {
                     Icon(
                         Icons.Rounded.Folder,
-                        contentDescription = "Library",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        contentDescription = "Files",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
         }
 
-        item { Spacer(Modifier.height(10.dp)) }
-
+        /* ------------------------------- hero ------------------------------ */
         item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Brush.linearGradient(listOf(Indigo, Violet)))
+                    .clip(RoundedCornerShape(28.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFF1F6BFF), Color(0xFF6C4BFF), Color(0xFF9B4BFF))
+                        )
+                    )
             ) {
                 Box(
                     modifier = Modifier
-                        .size(190.dp)
-                        .offset(x = 210.dp, y = (-70).dp)
+                        .size(220.dp)
+                        .offset(x = 190.dp, y = (-90).dp)
                         .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.09f))
+                        .background(Color.White.copy(alpha = 0.08f))
+                )
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .offset(x = (-40).dp, y = 150.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.06f))
                 )
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color.White.copy(alpha = 0.16f))
-                            .padding(horizontal = 9.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Rounded.AutoAwesome,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Spacer(Modifier.width(5.dp))
-                        Text(
-                            "ON-DEVICE · NO ADS",
-                            color = Color.White,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.2.sp
-                        )
-                    }
-                    Spacer(Modifier.height(13.dp))
+                    GlossTag("OFFLINE · NO ADS", Icons.Rounded.AutoAwesome)
+                    Spacer(Modifier.height(14.dp))
                     Text(
-                        "Turn any document\ninto a deck.",
+                        "Everything office.\nOne app.",
                         style = TextStyle(
                             color = Color.White,
-                            fontSize = 26.sp,
-                            lineHeight = 31.sp,
+                            fontSize = 27.sp,
+                            lineHeight = 32.sp,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = (-0.6).sp
+                            letterSpacing = (-0.7).sp
                         )
                     )
                     Spacer(Modifier.height(7.dp))
                     Text(
-                        "Scan a page or pick a PDF — Vellum typesets a real, editable PowerPoint.",
+                        "Scan, read Word, Excel and PowerPoint, and turn any PDF into a real deck.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.82f)
+                        color = Color.White.copy(alpha = 0.85f)
                     )
                     Spacer(Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier
-                            .height(46.dp)
-                            .clip(RoundedCornerShape(23.dp))
-                            .background(Color.White)
-                            .clickable(onClick = onScan)
-                            .padding(horizontal = 18.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Rounded.PhotoCamera,
-                            contentDescription = null,
-                            tint = Indigo,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            "Scan document",
-                            color = IndigoDeep,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.5.sp
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Icon(
-                            Icons.Rounded.ArrowForward,
-                            contentDescription = null,
-                            tint = IndigoDeep,
-                            modifier = Modifier.size(16.dp)
-                        )
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .height(44.dp)
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(Color.White)
+                                .bounceClick { onScan() }
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Rounded.PhotoCamera,
+                                contentDescription = null,
+                                tint = IndigoDeep,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(7.dp))
+                            Text(
+                                "Scan",
+                                color = IndigoDeep,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.5.sp
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .height(44.dp)
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(Color.White.copy(alpha = 0.18f))
+                                .bounceClick { onImportPdf() }
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Rounded.Upload,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(17.dp)
+                            )
+                            Spacer(Modifier.width(7.dp))
+                            Text(
+                                "Import PDF",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.5.sp
+                            )
+                        }
                     }
                 }
             }
         }
 
+        /* --------------------------- quick actions ------------------------- */
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                QuickAction("Import PDF", Icons.Rounded.Description, Modifier.weight(1f), onImportPdf)
-                QuickAction("Deck studio", Icons.Rounded.AutoAwesome, Modifier.weight(1f)) {
-                    onTool(ToolId.DECK)
-                }
+                QuickAction("Scan", Icons.Rounded.PhotoCamera, listOf(Indigo, IndigoDeep), onScan)
+                QuickAction("Import", Icons.Rounded.Upload, listOf(Teal, Color(0xFF0A6BFF)), onImportPdf)
+                QuickAction(
+                    "Deck",
+                    Icons.Rounded.AutoAwesome,
+                    listOf(Amber, Color(0xFFFF6B00))
+                ) { onTool(ToolId.DECK) }
+                QuickAction("Files", Icons.Rounded.Folder, listOf(Violet, Color(0xFF4B48C9)), onOpenLibrary)
             }
         }
 
-        item { SectionLabel("Studio", Modifier.padding(top = 20.dp)) }
+        /* ----------------------------- office ------------------------------ */
+        item { SectionHeader("Office apps") }
 
-        items(ToolId.entries.chunked(3).size) { rowIndex ->
-            val row = ToolId.entries.chunked(3)[rowIndex]
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                OfficeCard(
+                    icon = iconFor(ToolId.DOCX),
+                    colors = colorsFor(ToolId.DOCX),
+                    title = "Word",
+                    subtitle = ".docx documents",
+                    modifier = Modifier.weight(1f)
+                ) { onOpenOffice(ToolId.DOCX) }
+                OfficeCard(
+                    icon = iconFor(ToolId.SHEET),
+                    colors = colorsFor(ToolId.SHEET),
+                    title = "Excel",
+                    subtitle = ".xlsx sheets",
+                    modifier = Modifier.weight(1f)
+                ) { onOpenOffice(ToolId.SHEET) }
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                OfficeCard(
+                    icon = iconFor(ToolId.SLIDES),
+                    colors = colorsFor(ToolId.SLIDES),
+                    title = "PowerPoint",
+                    subtitle = ".pptx decks",
+                    modifier = Modifier.weight(1f)
+                ) { onOpenOffice(ToolId.SLIDES) }
+                OfficeCard(
+                    icon = Icons.Rounded.Description,
+                    colors = listOf(PdfRed, Color(0xFFB01818)),
+                    title = "PDF",
+                    subtitle = "Open or convert",
+                    modifier = Modifier.weight(1f)
+                ) { onImportPdf() }
+            }
+        }
+
+        /* --------------------------- pdf toolkit --------------------------- */
+        item {
+            SectionHeader("PDF toolkit", action = "All tools") { onOpenTools() }
+        }
+
+        items(toolkit.chunked(3).size) { rowIndex ->
+            val row = toolkit.chunked(3)[rowIndex]
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(9.dp)
@@ -212,6 +281,7 @@ fun HomeScreen(
                         icon = iconFor(id),
                         title = id.title,
                         subtitle = id.subtitle,
+                        colors = colorsFor(id),
                         onClick = { onTool(id) },
                         modifier = Modifier.weight(1f)
                     )
@@ -221,36 +291,27 @@ fun HomeScreen(
             Spacer(Modifier.height(9.dp))
         }
 
+        /* ------------------------------ recent ----------------------------- */
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SectionLabel("Recent", Modifier.weight(1f))
-                Text(
-                    "See all",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable(onClick = onOpenLibrary)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-            }
+            SectionHeader(
+                "Recent",
+                action = if (recent.isEmpty()) null else "See all",
+                onAction = if (recent.isEmpty()) null else onOpenLibrary
+            )
         }
 
         if (recent.isEmpty()) {
             item {
-                Panel(modifier = Modifier.padding(top = 2.dp)) {
+                Panel {
                     EmptyState(
                         icon = Icons.Rounded.Description,
                         title = "Nothing here yet",
-                        body = "Scan a document or import a PDF — everything you make shows up here."
+                        body = "Scan a page or import a PDF — everything you make stays on this phone."
                     )
                 }
             }
         } else {
-            items(recent.take(4).size) { index ->
+            items(recent.take(5).size) { index ->
                 val file = recent[index]
                 FileRow(
                     file = file,
@@ -262,10 +323,10 @@ fun HomeScreen(
 
         item {
             Text(
-                "Everything runs on your phone. No account, no upload, no ads.",
+                "Word, Excel, PowerPoint and PDF — read, convert and create without an account.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth().padding(top = 18.dp, start = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 18.dp, start = 4.dp, end = 4.dp)
             )
         }
     }
@@ -273,26 +334,64 @@ fun HomeScreen(
 
 @Composable
 private fun QuickAction(
-    text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    icon: ImageVector,
+    colors: List<Color>,
+    onClick: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        GradientIcon(
+            icon = icon,
+            colors = colors,
+            size = 52.dp,
+            iconSize = 23.dp,
+            modifier = Modifier.bounceClick { onClick() }
+        )
+        Spacer(Modifier.height(7.dp))
+        Text(
+            label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun OfficeCard(
+    icon: ImageVector,
+    colors: List<Color>,
+    title: String,
+    subtitle: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .height(46.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
+    GlassCard(
+        modifier = modifier,
+        radius = 22.dp,
+        padding = 14.dp,
+        onClick = onClick
     ) {
-        Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(17.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            GradientIcon(icon = icon, colors = colors, size = 44.dp, iconSize = 21.dp)
+            Spacer(Modifier.width(11.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }

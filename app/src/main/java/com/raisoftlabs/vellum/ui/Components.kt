@@ -1,6 +1,8 @@
 package com.raisoftlabs.vellum.ui
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,29 +22,40 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.raisoftlabs.vellum.core.PdfEngine
+import com.raisoftlabs.vellum.core.PdfRender
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
@@ -55,15 +68,16 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 6.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (onBack != null) {
             IconButton(onClick = onBack) {
                 Icon(
-                    Icons.Rounded.ArrowBack,
+                    Icons.Rounded.ArrowBackIosNew,
                     contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         } else {
@@ -108,32 +122,23 @@ fun Panel(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val shape = RoundedCornerShape(20.dp)
-    val base = if (onClick != null) {
-        modifier.fillMaxWidth().clip(shape).clickable(onClick = onClick)
-    } else {
-        modifier.fillMaxWidth()
-    }
-    Surface(
-        modifier = base,
-        shape = shape,
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-    ) {
-        Column(modifier = Modifier.padding(padding), content = content)
-    }
+    GlassCard(modifier = modifier, padding = padding, onClick = onClick, content = content)
 }
 
 @Composable
-fun IconBadge(icon: ImageVector, tint: Color = MaterialTheme.colorScheme.primary, size: Dp = 34.dp) {
+fun IconBadge(icon: ImageVector, tint: Color = MaterialTheme.colorScheme.primary, size: Dp = 36.dp) {
     Box(
         modifier = Modifier
             .size(size)
-            .clip(RoundedCornerShape(size / 3))
-            .background(tint.copy(alpha = 0.12f)),
+            .clip(RoundedCornerShape(size * 0.31f))
+            .background(
+                Brush.linearGradient(
+                    listOf(tint, tint.copy(alpha = 0.72f))
+                )
+            ),
         contentAlignment = Alignment.Center
     ) {
-        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(size * 0.52f))
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(size * 0.5f))
     }
 }
 
@@ -143,35 +148,90 @@ fun ToolTile(
     title: String,
     subtitle: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    colors: List<Color> = listOf(Indigo, Violet)
 ) {
-    Surface(
-        modifier = modifier
-            .clip(RoundedCornerShape(18.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    GlassCard(
+        modifier = modifier,
+        radius = 20.dp,
+        padding = 12.dp,
+        onClick = onClick
     ) {
-        Column(modifier = Modifier.padding(13.dp)) {
-            IconBadge(icon)
-            Spacer(Modifier.height(11.dp))
+        GradientIcon(icon = icon, colors = colors, size = 40.dp, iconSize = 19.dp)
+        Spacer(Modifier.height(10.dp))
+        Text(
+            title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (subtitle != null) {
             Text(
-                title,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            if (subtitle != null) {
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+        }
+    }
+}
+
+/* ------------------------------ file rows -------------------------------- */
+
+internal fun typeColor(file: File): Color = when (file.extension.lowercase()) {
+    "pdf" -> PdfRed
+    "pptx" -> PptOrange
+    "docx" -> WordBlue
+    "xlsx", "xls", "csv" -> ExcelGreen
+    "jpg", "jpeg", "png" -> Teal
+    "txt" -> Color(0xFF8E8E93)
+    else -> Violet
+}
+
+@Composable
+fun FileThumb(file: File, size: Dp = 46.dp) {
+    var bitmap by remember(file.path) { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(file.path) {
+        bitmap = withContext(Dispatchers.IO) {
+            runCatching {
+                when (file.extension.lowercase()) {
+                    "pdf" -> PdfRender(file).use { render ->
+                        if (render.pageCount > 0) render.render(0, 150) else null
+                    }
+
+                    "jpg", "jpeg", "png" -> PdfEngine.decodeForPdf(file, 300)
+                    else -> null
+                }
+            }.getOrNull()
+        }
+    }
+    val image = bitmap
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(RoundedCornerShape(size * 0.3f))
+            .background(
+                Brush.linearGradient(
+                    listOf(typeColor(file), typeColor(file).copy(alpha = 0.75f))
                 )
-            }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        if (image != null) {
+            Image(
+                bitmap = image.asImageBitmap(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Text(
+                typeLabel(file),
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White
+            )
         }
     }
 }
@@ -187,23 +247,11 @@ fun FileRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .padding(vertical = 9.dp, horizontal = 4.dp),
+            .bounceClick { onClick() }
+            .padding(vertical = 8.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(RoundedCornerShape(13.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                typeLabel(file),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+        FileThumb(file)
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -214,7 +262,7 @@ fun FileRow(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                file.quickMeta(),
+                "${typeLabel(file)} · ${file.quickMeta()}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -240,6 +288,8 @@ fun FileRow(
     }
 }
 
+/* ------------------------------- controls -------------------------------- */
+
 @Composable
 fun GradientButton(
     text: String,
@@ -248,20 +298,36 @@ fun GradientButton(
     enabled: Boolean = true,
     icon: ImageVector? = null
 ) {
-    val shape = RoundedCornerShape(28.dp)
+    val shape = RoundedCornerShape(30.dp)
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(54.dp)
             .clip(shape)
+            .then(
+                if (enabled) Modifier.bounceClick { onClick() }
+                else Modifier.clickable(enabled = false) {}
+            )
             .background(
-                if (enabled) Brush.linearGradient(listOf(Indigo, Violet))
+                if (enabled) Brush.verticalGradient(listOf(Color(0xFF3DA0FF), Color(0xFF0A6BFF)))
                 else SolidColor(MaterialTheme.colorScheme.surfaceVariant)
             )
-            .clickable(enabled = enabled, onClick = onClick),
-        contentAlignment = Alignment.Center
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(27.dp)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = 0.22f), Color.Transparent)
+                    )
+                )
+        )
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (icon != null) {
                 Icon(
                     icon,
@@ -288,9 +354,9 @@ fun SelectChip(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.clip(RoundedCornerShape(24.dp)).clickable(onClick = onClick),
+        modifier = modifier.clip(RoundedCornerShape(24.dp)).bounceClick { onClick() },
         shape = RoundedCornerShape(24.dp),
-        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
         border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Text(
@@ -314,18 +380,22 @@ fun EmptyState(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 34.dp, horizontal = 24.dp),
+            .padding(vertical = 30.dp, horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .size(64.dp)
+                .size(62.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(
+                    Brush.linearGradient(
+                        listOf(Indigo.copy(alpha = 0.16f), Violet.copy(alpha = 0.12f))
+                    )
+                ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(26.dp))
+            Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(26.dp))
         }
         Spacer(Modifier.height(14.dp))
         Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
@@ -354,23 +424,27 @@ fun BusyOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.45f))
+            .background(Color.Black.copy(alpha = 0.32f))
             .clickable(interactionSource = interaction, indication = null) { },
         contentAlignment = Alignment.Center
     ) {
-        Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surface) {
+        Surface(
+            shape = RoundedCornerShape(26.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 18.dp
+        ) {
             Column(
                 modifier = Modifier
-                    .width(240.dp)
+                    .width(238.dp)
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (progress == null) {
-                    CircularProgressIndicator(modifier = Modifier.size(44.dp), strokeWidth = 4.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(42.dp), strokeWidth = 3.5.dp)
                 } else {
                     CircularProgressIndicator(
                         progress = { progress.coerceIn(0f, 1f) },
-                        modifier = Modifier.size(54.dp),
+                        modifier = Modifier.size(52.dp),
                         strokeWidth = 5.dp
                     )
                 }
@@ -384,6 +458,32 @@ fun BusyOverlay(
                     textAlign = TextAlign.Center
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ThinProgress(progress: Float?, modifier: Modifier = Modifier, label: String? = null) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        if (progress == null) {
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp))
+            )
+        } else {
+            LinearProgressIndicator(
+                progress = { progress.coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        }
+        if (label != null) {
+            Spacer(Modifier.height(7.dp))
+            Text(
+                label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
