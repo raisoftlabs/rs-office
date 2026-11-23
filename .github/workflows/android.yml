@@ -43,14 +43,14 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk out/Vellum-1.2.apk
+          cp app/build/outputs/apk/release/app-release.apk out/Vellum-2.0.apk
           ls -lh out
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: vellum-apk
-          path: out/Vellum-1.2.apk
+          path: out/Vellum-2.0.apk
           retention-days: 30
 
       - name: Publish download link
@@ -68,4 +68,4 @@ jobs:
             - PDF toolkit: merge, split, compress, pages to PNG, images to PDF, OCR
             - New glossy iOS-style UI with spring animations
             - No account, no ads, nothing leaves the phone
-          files: out/Vellum-1.2.apk
+          files: out/Vellum-2.0.apk

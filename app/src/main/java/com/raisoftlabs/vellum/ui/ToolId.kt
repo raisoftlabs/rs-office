@@ -19,7 +19,8 @@ enum class ToolGroup(val title: String) {
     CREATE("Create"),
     ORGANIZE("Organize"),
     CONVERT("Convert"),
-    READ("Read")
+    READ("Read"),
+    EDIT("Edit")
 }
 
 enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup) {
@@ -31,9 +32,9 @@ enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup)
     COMPRESS("Compress", "Shrink size", ToolGroup.ORGANIZE),
     TO_IMAGES("To images", "Pages to PNG", ToolGroup.CONVERT),
     OCR("OCR", "Read text", ToolGroup.READ),
-    DOCX("Word", "Open .docx", ToolGroup.READ),
-    SHEET("Excel", "Open .xlsx", ToolGroup.READ),
-    SLIDES("PowerPoint", "Open .pptx", ToolGroup.READ);
+    DOCX("Word", "Edit .docx", ToolGroup.EDIT),
+    SHEET("Excel", "Edit .xlsx", ToolGroup.EDIT),
+    SLIDES("PowerPoint", "Edit .pptx", ToolGroup.EDIT);
 
     val isOffice: Boolean get() = this == DOCX || this == SHEET || this == SLIDES
 }

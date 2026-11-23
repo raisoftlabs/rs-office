@@ -48,6 +48,46 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
 - 2026-11-21: Scanner = Play Services ML Kit document scanner
   (`play-services-mlkit-document-scanner:16.0.0`), PDF result format.
 
+## Office readers (v1.2)
+- `core/DocxReader.kt` — paragraphs + heading styles from word/document.xml
+- `core/XlsxEngine.kt` — sharedStrings + cell refs → rows; `toPdf()` draws a
+  paginated A4-landscape table with wrapped cells
+- `core/PptxReader.kt` — slide text in order from ppt/slides/slideN.xml
+- `ui/OfficeScreen.kt` — one viewer for all three (paper list / table with
+  horizontal scroll + PDF export / slide cards)
+
+## Design system (v1.2 — iOS glossy)
+- `ui/Theme.kt` — iOS palette (system blue #0A84FF, bg #F2F2F7 / #000),
+  Word/Excel/PowerPoint brand colors exported for tiles
+- `ui/Design.kt` — AppBackground (2 drifting radial washes), GlassCard
+  (vertical gloss + hairline), GradientIcon, SectionHeader, GlossTag,
+  `Modifier.bounceClick` (spring squish on press)
+- `ui/App.kt` — AnimatedContent route slide+fade, Crossfade tabs, animated
+  bottom pill; tabs Home / Tools / Files / About
+- `ui/HomeScreen.kt` — hero, quick actions, Office apps 2x2, PDF toolkit
+  grid, recent files with page thumbnails
+- `ui/ToolsScreen.kt` — every tool grouped Create / Organize / Convert / Read
+
+## Decisions
+- 2026-11-23: user rejected the custom look — UI now follows mainstream
+  office-app conventions (WPS/Office style grids, brand-colored app tiles).
+- 2026-11-23: "all office tools" means real Word/Excel/PowerPoint readers in
+  the app, not only a PDF→PPT converter. Viewers are read-only; Excel exports PDF.
+
+## Roadmap: READ → WRITE (v2 direction)
+- 2026-11-23 directive: readers are not enough — Vellum must be an MS Office
+  competitor, i.e. real editing of .docx / .xlsx / .pptx offline.
+- No usable free offline OOXML edit engine exists for Android (POI/docx4j are
+  broken or huge; ONLYOFFICE/Collabora SDKs are licensed + server-backed).
+  Decision: extend our own hand-written OOXML layer — read-modify-write the
+  package, preserving every part we do not touch (styles, theme, media,
+  relationships) so Office opens the result with zero repair prompts.
+- Plan per module: model (parse) → editor UI → writer (round-trip) → unit test
+  on the produced zip/XML (existing PptxBuilderTest pattern).
+- Editing surface (phase 1): text entry, bold/italic/underline/strike, font
+  size, color, highlight, alignment, lists, undo/redo, save-as-copy.
+  Phase 2: tables, images, headers/footers, formulas, charts, slide layouts.
+
 ## State
-v1.0.3 released green (tests + APK). Awaiting first on-device install test:
-scan → deck → open in PowerPoint; verify SMART mode on a text PDF.
+v1.2 released green (Vellum-1.2.apk). Awaiting device test of the office
+viewers + the new UI. v2 = editing engine (Word / Excel / PowerPoint writers).

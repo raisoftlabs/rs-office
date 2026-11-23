@@ -65,7 +65,7 @@ fun AboutScreen() {
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    "Word, Excel, PowerPoint, PDF · 1.2",
+                    "Word, Excel, PowerPoint, PDF · 2.0 — editable",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -83,7 +83,7 @@ fun AboutScreen() {
                 Text(
                     "Most office apps ask you to upload, sign in and pay before they do anything useful. " +
                             "Vellum does the opposite: scan or import, and the hard part — turning a document " +
-                            "into a real presentation — happens on your phone.",
+                            "into a real presentation — happens on your phone. v2 adds real editing: open a .docx, .xlsx or .pptx, change the text and formatting, save it back with everything else preserved.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 6.dp)

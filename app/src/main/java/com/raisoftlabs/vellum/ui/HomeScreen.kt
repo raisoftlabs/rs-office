@@ -235,14 +235,14 @@ fun HomeScreen(
                     icon = iconFor(ToolId.DOCX),
                     colors = colorsFor(ToolId.DOCX),
                     title = "Word",
-                    subtitle = ".docx documents",
+                    subtitle = "Edit .docx",
                     modifier = Modifier.weight(1f)
                 ) { onOpenOffice(ToolId.DOCX) }
                 OfficeCard(
                     icon = iconFor(ToolId.SHEET),
                     colors = colorsFor(ToolId.SHEET),
                     title = "Excel",
-                    subtitle = ".xlsx sheets",
+                    subtitle = "Edit .xlsx",
                     modifier = Modifier.weight(1f)
                 ) { onOpenOffice(ToolId.SHEET) }
             }
@@ -252,7 +252,7 @@ fun HomeScreen(
                     icon = iconFor(ToolId.SLIDES),
                     colors = colorsFor(ToolId.SLIDES),
                     title = "PowerPoint",
-                    subtitle = ".pptx decks",
+                    subtitle = "Edit .pptx",
                     modifier = Modifier.weight(1f)
                 ) { onOpenOffice(ToolId.SLIDES) }
                 OfficeCard(
