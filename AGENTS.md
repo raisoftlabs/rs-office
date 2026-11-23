@@ -1,19 +1,19 @@
-# Vellum — offline office studio (Android)
+# RS Office — offline office studio (Android)
 
 Android app that turns scans and PDFs into real, editable PowerPoint decks,
 plus PDF tools and OCR. No account, no cloud, no ads.
 
-Repo: github.com/raisoftlabs/vellum (public) · Package: com.raisoftlabs.vellum
-Local: ~/vellum · Branch: main (push `master:main`)
+Repo: github.com/raisoftlabs/rs-office (public) · Package: com.raisoftlabs.rsoffice
+Local: ~/rsoffice · Branch: master (push `master:main`)
 
 ## Build & verify
 No local JDK/Gradle — the phone never builds. Verification is CI:
 - Workflow: `.github/workflows/android.yml` (Gradle 8.9 supplied by
   gradle/actions/setup-gradle, JDK 17, AGP 8.5.2, Kotlin 2.0.20)
 - Runs `gradle :app:testReleaseUnitTest` then `:app:assembleRelease`
-- Publishes a GitHub Release per build with `Vellum-1.0.apk` (direct link)
+- Publishes a GitHub Release per build with `RSOffice-2.1.apk` (direct link)
 - Push branch `master` to remote `main`; watch runs via the API
-  (`/repos/raisoftlabs/vellum/actions/runs`) — CI is the compile step.
+  (`/repos/raisoftlabs/rs-office/actions/runs`) — CI is the compile step.
 - No gradle wrapper in the repo on purpose (setup-gradle installs Gradle).
 
 ## Architecture
@@ -30,7 +30,7 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   `fileText(file)` (PDF ≤30 pages or one image).
 - `core/DeckMaker.kt` — EXACT (page images) / SMART (retypeset text, font-size
   headings, OCR fallback, `Result?` null when no text). Max 80 slides.
-- `core/Store.kt` — SAF import into `getExternalFilesDir/Vellum`, list,
+- `core/Store.kt` — SAF import into `getExternalFilesDir/RS Office`, list,
   share, openWith (FileProvider `${applicationId}.fileprovider`).
 - `ui/App.kt` — all navigation: `Route` sealed interface (Result/Deck/Tool/
   Viewer/Text), bottom tabs Home/Studio/Files/About, ML Kit document-scanner
@@ -75,7 +75,7 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   the app, not only a PDF→PPT converter. Viewers are read-only; Excel exports PDF.
 
 ## Roadmap: READ → WRITE (v2 direction)
-- 2026-11-23 directive: readers are not enough — Vellum must be an MS Office
+- 2026-11-23 directive: readers are not enough — RS Office must be an MS Office
   competitor, i.e. real editing of .docx / .xlsx / .pptx offline.
 - No usable free offline OOXML edit engine exists for Android (POI/docx4j are
   broken or huge; ONLYOFFICE/Collabora SDKs are licensed + server-backed).
@@ -88,6 +88,21 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
   size, color, highlight, alignment, lists, undo/redo, save-as-copy.
   Phase 2: tables, images, headers/footers, formulas, charts, slide layouts.
 
+## Decisions (2026-11-23, rename + quality directive)
+- User rejected a name-only change: RS Office must be a full offline MS Office
+  competitor with professional, polished UX — not a rebranded PDF tool.
+- Package renamed to `com.raisoftlabs.rsoffice`; GitHub repo renamed to
+  `raisoftlabs/rs-office`. Keystore file/alias intentionally unchanged so the
+  signing identity stays stable.
+- Icons: only Google Material Icons (Apache 2.0) and original vector marks.
+  No Microsoft logos or third-party copyrighted artwork.
+- Target look: white/light, glossy/fluid, mainstream office-app conventions but
+  visually distinct; fluid gradients, soft depth, no skeuomorphic clutter.
+- Next priorities: fix v2 CI, light glossy reskin + About, accurate scan page
+  review, then broader Office/PDF creation and editing tools.
+
 ## State
-v1.2 released green (Vellum-1.2.apk). Awaiting device test of the office
-viewers + the new UI. v2 = editing engine (Word / Excel / PowerPoint writers).
+v2.1 in progress: Word/Excel/PowerPoint read-modify-write editors exist but the
+first v2 commit failed CI (OfficeScreen `if` expressions + missing
+`newParagraph`); fixed in this pass. Branding, package and repo renamed. CI is
+the only compile step. Next: professional light UI, scan QA, tool expansion.

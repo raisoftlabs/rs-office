@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace 'com.raisoftlabs.vellum'
+    namespace 'com.raisoftlabs.rsoffice'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.raisoftlabs.vellum'
+        applicationId 'com.raisoftlabs.rsoffice'
         minSdk 26
         targetSdk 34
-        versionCode 3
-        versionName '2.0'
+        versionCode 4
+        versionName '2.1'
         vectorDrawables { useSupportLibrary true }
     }
 

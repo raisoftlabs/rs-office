@@ -1,11 +1,11 @@
-# TASK — Vellum (Android office studio)
+# TASK — RS Office (Android office studio)
 
-GOAL: Build and ship "Vellum" — an offline Android office app whose core is
+GOAL: Build and ship "RS Office" — an offline Android office app whose core is
 Scan → PDF → real PowerPoint (.pptx), plus PDF tools, OCR and a document
 library. Polished, smooth, zero ads, zero login.
 
 Plan / PRD: `PLAN.md` (to be written after design gate)
-Repo: github.com/raisoftlabs/vellum (public, Actions → signed release APK)
+Repo: github.com/raisoftlabs/rs-office (public, Actions → signed release APK)
 Local dir: ~/vellum
 
 ## Study of existing office apps (done 2026-11-21)
@@ -17,7 +17,7 @@ Local dir: ~/vellum
 - Adobe Scan / CamScanner / Microsoft Lens: great scanning, but conversion
   to editable Office files is locked/cloud and no real slide builder.
 GAP → nobody ships a free, offline, ad-free pipeline that turns a scanned
-document or any PDF into a real editable .pptx. That is Vellum's core.
+document or any PDF into a real editable .pptx. That is RS Office's core.
 
 ## Build steps
 - [x] Recon: toolchain, GitHub creds, library versions, PPTX format prototype
@@ -52,7 +52,7 @@ Store) + UI (Home, Deck studio, Tools, Viewer, Result, Library, Text, About)
 + App.kt navigation + MainActivity + PPTX unit test + GitHub Actions workflow.
 
 DONE: repo pushed, CI green (unit tests + signed APK), release v1.0.3 with
-Vellum-1.0.apk (60.5 MB).
+RS Office-1.0.apk (60.5 MB).
 
 NEXT: user installs the APK and tests: scan -> PDF -> deck, SMART mode on a
 text PDF, merge/split, OCR. Then fix whatever the device test exposes.

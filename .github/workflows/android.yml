@@ -1,4 +1,4 @@
-name: Android release
+name: RS Office Android release
 
 on:
   push:
@@ -9,16 +9,18 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: android-release
-  cancel-in-progress: true
+  group: rs-office-release
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +36,7 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Unit tests (PPTX writer)
+      - name: Unit tests
         run: gradle :app:testReleaseUnitTest --no-daemon --stacktrace
 
       - name: Build signed release APK
@@ -43,29 +45,28 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk out/Vellum-2.0.apk
+          cp app/build/outputs/apk/release/app-release.apk out/RSOffice-2.1.apk
           ls -lh out
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vellum-apk
-          path: out/Vellum-2.0.apk
+          name: rsoffice-apk
+          path: out/RSOffice-2.1.apk
           retention-days: 30
 
       - name: Publish download link
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Vellum v1.0.${{ github.run_number }}
+          tag_name: v2.1.${{ github.run_number }}
+          name: RS Office v2.1.${{ github.run_number }}
           make_latest: true
           body: |
-            **Vellum 1.2** — offline office suite.
+            **RS Office 2.1** — offline Word, Excel, PowerPoint and PDF studio.
 
-            - Read Word (.docx), Excel (.xlsx) and PowerPoint (.pptx) on device
-            - Export any spreadsheet as a clean PDF table
-            - Scan documents to PDF, then typeset them into a real editable deck
-            - PDF toolkit: merge, split, compress, pages to PNG, images to PDF, OCR
-            - New glossy iOS-style UI with spring animations
-            - No account, no ads, nothing leaves the phone
-          files: out/Vellum-2.0.apk
+            - Edit .docx, .xlsx and .pptx files directly on the device
+            - Preserve untouched document parts so Office opens files cleanly
+            - Scan to PDF, convert documents to editable slide decks, run OCR
+            - PDF toolkit: merge, split, compress, pages to images, images to PDF
+            - No account, no ads, no cloud — documents stay on the phone
+          files: out/RSOffice-2.1.apk
