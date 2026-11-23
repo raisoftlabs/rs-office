@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -108,18 +110,19 @@ fun NewDeckScreen(
         item {
             GradientButton(
                 text = "Create PowerPoint",
-                icon = androidx.compose.material.icons.Icons.Rounded.Add,
-                enabled = !busy
-            ) {
-                busy = true
-                scope.launch {
-                    val output = withContext(Dispatchers.IO) {
-                        buildDeck(context, title, subtitle, bullets, palette)
+                onClick = {
+                    busy = true
+                    scope.launch {
+                        val output = withContext(Dispatchers.IO) {
+                            buildDeck(context, title, subtitle, bullets, palette)
+                        }
+                        busy = false
+                        if (output != null) onDone(output)
                     }
-                    busy = false
-                    if (output != null) onDone(output)
-                }
-            }
+                },
+                icon = Icons.Rounded.Add,
+                enabled = !busy
+            )
         }
 
         item { Spacer(Modifier.height(8.dp)) }
