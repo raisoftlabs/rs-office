@@ -126,5 +126,20 @@ No local JDK/Gradle — the phone never builds. Verification is CI:
 v2.1 shipped to `main`: package/repo renamed, v2 editors compile, light glossy
 fluid reskin, route back-stack, credits, post-scan page review, Text-to-PDF,
 and the original OOXML engine foundation are in. Deck automation removed.
-CI green on `6424d19`. Next: migrate editors onto PartStore/XmlTree/UndoStack
-and continue UI polish.
+CI green on `6424d19`.
+
+## All-in-one rebuild (2026-11-24)
+- New `core/OfficeFactory.kt` creates brand-new DOCX/XLSX packages from our own
+  OOXML parts via `PartStore`; new PPTX uses `PptxBuilder` on the original
+  template; new PDF uses `PdfEngine.textToPdf`.
+- New bottom tab **Create** + `CreateHubScreen` + `CreatorScreen`: New document,
+  New spreadsheet, New presentation, New PDF, Scan, Images to PDF.
+- `ToolId.PDF_EDITOR` + `PdfOpenScreen` + `PdfEditorScreen`: structural PDF edits
+  (rotate / reorder / delete) preserve original page streams via
+  `PdfEngine.applyPageOperations`; standard sticky notes via
+  `PdfEngine.addStickyNote`. Save is always a new `_edited.pdf` copy.
+- PDF editor license research: pdfbox-android is Apache-2.0; MuPDF/iText are
+  AGPL/commercial and must not be used. Android's built-in annotation APIs are
+  API 36.1-only, so pdfbox-android is our writer.
+- Next: verify CI, then migrate DocxEditor/XlsxEditor/PptxEditor onto
+  PartStore/XmlTree/UndoStack.

@@ -13,6 +13,8 @@ import com.tom_roush.pdfbox.io.MemoryUsageSetting
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
 import com.tom_roush.pdfbox.multipdf.Splitter
 import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.common.PDRectangle
+import com.tom_roush.pdfbox.pdmodel.interactive.annotation.PDAnnotationText
 import com.tom_roush.pdfbox.text.PDFTextStripper
 import com.tom_roush.pdfbox.text.TextPosition
 import java.io.File
@@ -225,6 +227,52 @@ object PdfEngine {
         }
         if (line.isNotEmpty()) result += line
         return result.ifEmpty { listOf("") }
+    }
+
+    /**
+     * Structural PDF edit: keeps the original page content streams, applying
+     * only order, deletion and rotation. Used by the PDF editor.
+     * [order] holds original page indices in the desired order.
+     */
+    fun applyPageOperations(
+        source: File,
+        out: File,
+        order: List<Int>,
+        rotations: Map<Int, Int> = emptyMap()
+    ) {
+        PDDocument.load(source, MemoryUsageSetting.setupTempFileOnly()).use { doc ->
+            val original = (0 until doc.numberOfPages).map { doc.getPage(it) }
+            require(order.isNotEmpty() && order.all { it in original.indices }) { "invalid page order" }
+            val selected = order.map { original[it] }
+            selected.forEachIndexed { index, page ->
+                val rotation = rotations[order[index]] ?: page.rotation
+                page.rotation = ((rotation % 360) + 360) % 360
+            }
+            for (i in doc.numberOfPages - 1 downTo 0) doc.removePage(i)
+            selected.forEach { doc.addPage(it) }
+            doc.save(out)
+        }
+    }
+
+    /** Adds a standard PDF sticky-note annotation that other viewers can read. */
+    fun addStickyNote(
+        source: File,
+        out: File,
+        pageIndex: Int,
+        x: Float,
+        y: Float,
+        text: String
+    ) {
+        PDDocument.load(source, MemoryUsageSetting.setupTempFileOnly()).use { doc ->
+            val page = doc.getPage(pageIndex)
+            val note = PDAnnotationText().apply {
+                setRectangle(PDRectangle(x, y, x + 28f, y + 28f))
+                setContents(text)
+                setOpen(true)
+            }
+            page.annotations.add(note)
+            doc.save(out)
+        }
     }
 
     /** Rebuilds a PDF from rendered pages at a lower resolution (real size win). */

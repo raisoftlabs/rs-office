@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Compress
 import androidx.compose.material.icons.rounded.ContentCut
 import androidx.compose.material.icons.rounded.Description
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.MergeType
 import androidx.compose.material.icons.rounded.PhotoCamera
@@ -23,9 +24,13 @@ enum class ToolGroup(val title: String) {
 }
 
 enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup) {
+    NEW_WORD("New document", "Blank Word file", ToolGroup.CREATE),
+    NEW_EXCEL("New spreadsheet", "Blank Excel file", ToolGroup.CREATE),
+    NEW_POWERPOINT("New presentation", "Blank PowerPoint file", ToolGroup.CREATE),
+    TEXT_TO_PDF("New PDF", "Type or paste text", ToolGroup.CREATE),
     SCAN("Scan", "Camera to PDF", ToolGroup.CREATE),
     IMAGES_TO_PDF("Images to PDF", "Photos to A4", ToolGroup.CREATE),
-    TEXT_TO_PDF("Text to PDF", "Type or paste text", ToolGroup.CREATE),
+    PDF_EDITOR("Edit PDF", "Pages, notes, reorder", ToolGroup.ORGANIZE),
     MERGE("Merge", "Join PDFs", ToolGroup.ORGANIZE),
     SPLIT("Split", "Separate pages", ToolGroup.ORGANIZE),
     COMPRESS("Compress", "Shrink size", ToolGroup.ORGANIZE),
@@ -39,9 +44,13 @@ enum class ToolId(val title: String, val subtitle: String, val group: ToolGroup)
 }
 
 fun iconFor(id: ToolId): ImageVector = when (id) {
+    ToolId.NEW_WORD -> Icons.Rounded.Description
+    ToolId.NEW_EXCEL -> Icons.Rounded.TableChart
+    ToolId.NEW_POWERPOINT -> Icons.Rounded.Slideshow
+    ToolId.TEXT_TO_PDF -> Icons.Rounded.Description
     ToolId.SCAN -> Icons.Rounded.PhotoCamera
     ToolId.IMAGES_TO_PDF -> Icons.Rounded.PictureAsPdf
-    ToolId.TEXT_TO_PDF -> Icons.Rounded.Description
+    ToolId.PDF_EDITOR -> Icons.Rounded.Edit
     ToolId.MERGE -> Icons.Rounded.MergeType
     ToolId.SPLIT -> Icons.Rounded.ContentCut
     ToolId.COMPRESS -> Icons.Rounded.Compress
@@ -53,6 +62,10 @@ fun iconFor(id: ToolId): ImageVector = when (id) {
 }
 
 fun colorsFor(id: ToolId): List<Color> = when (id) {
+    ToolId.NEW_WORD -> listOf(Color(0xFF3B6FC4), WordBlue)
+    ToolId.NEW_EXCEL -> listOf(Color(0xFF2E9B66), ExcelGreen)
+    ToolId.NEW_POWERPOINT -> listOf(Color(0xFFE9693F), PptOrange)
+    ToolId.PDF_EDITOR -> listOf(Violet, Indigo)
     ToolId.DOCX -> listOf(Color(0xFF3B6FC4), WordBlue)
     ToolId.SHEET -> listOf(Color(0xFF2E9B66), ExcelGreen)
     ToolId.SLIDES -> listOf(Color(0xFFE9693F), PptOrange)

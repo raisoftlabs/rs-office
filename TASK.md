@@ -61,3 +61,12 @@ architecture (clean room, no copied source) and build our own OOXML engine:
 1. `PartStore` + `XmlTree` + `UndoStack` foundation — DONE, CI green.
 2. Migrate DocxEditor, then XlsxEditor, then PptxEditor to that foundation.
 3. Continue light glossy UI polish and tool expansion.
+
+## ALL-IN-ONE REBUILD (2026-11-24)
+- [x] Study WPS/CamScanner UX + clean-room OOXML/PDF creation patterns.
+- [x] `OfficeFactory`: new DOCX/XLSX/PPTX/PDF files from our own code.
+- [x] Create tab with New document / spreadsheet / presentation / PDF.
+- [x] General PDF editor: rotate / reorder / delete pages, sticky notes,
+      save-as-copy. Structural edits preserve original PDF content quality.
+- [ ] CI verification for this rebuild.
+- [ ] Migrate existing editors onto PartStore/XmlTree/UndoStack.

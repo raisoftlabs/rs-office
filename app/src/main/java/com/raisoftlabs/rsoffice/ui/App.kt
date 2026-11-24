@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Apps
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Home
@@ -68,8 +69,12 @@ import java.io.File
 
 sealed interface Route {
     object TextToPdf : Route
+    object CreateHub : Route
+    object PdfOpen : Route
+    data class Creator(val kind: ToolId) : Route
     data class Result(val file: File) : Route
     data class ScanReview(val file: File) : Route
+    data class PdfEdit(val file: File) : Route
     data class Tool(val id: ToolId) : Route
     data class Viewer(val file: File) : Route
     data class Office(val file: File) : Route
@@ -178,7 +183,7 @@ fun RSOfficeApp() {
                     busyMessage = null
                     if (file != null) {
                         refreshLibrary()
-                        openRoute(Route.ScanReview(file))
+                        openRoute(Route.PdfEdit(file))
                     } else {
                         context.toast("The scan could not be saved.")
                     }
@@ -223,6 +228,10 @@ fun RSOfficeApp() {
         when {
             id == ToolId.SCAN -> startScan()
             id == ToolId.TEXT_TO_PDF -> openRoute(Route.TextToPdf)
+            id in setOf(ToolId.NEW_WORD, ToolId.NEW_EXCEL, ToolId.NEW_POWERPOINT) ->
+                openRoute(Route.Creator(id))
+
+            id == ToolId.PDF_EDITOR -> openRoute(Route.PdfOpen)
             id.isOffice -> openOffice(id)
             else -> openRoute(Route.Tool(id))
         }
@@ -289,17 +298,20 @@ fun RSOfficeApp() {
                                     onTool = { handleTool(it) },
                                     onOpenFile = { openFile(it) },
                                     onShareFile = { Store.share(context, it) },
-                                    onOpenLibrary = { tab = 2 },
-                                    onOpenTools = { tab = 1 }
+                                    onOpenLibrary = { tab = 3 },
+                                    onOpenTools = { tab = 2 },
+                                    onOpenCreate = { tab = 1 }
                                 )
 
-                                1 -> ToolsScreen(
+                                1 -> CreateHubScreen(onTool = { handleTool(it) })
+
+                                2 -> ToolsScreen(
                                     onTool = { handleTool(it) },
                                     onOpenOffice = { openOffice(it) },
                                     onScan = { startScan() }
                                 )
 
-                                2 -> LibraryScreen(
+                                3 -> LibraryScreen(
                                     files = files,
                                     onOpen = { openFile(it) },
                                     onShare = { Store.share(context, it) },
@@ -323,6 +335,25 @@ fun RSOfficeApp() {
                                 }
                             )
 
+                            Route.CreateHub -> CreateHubScreen(onTool = { handleTool(it) })
+
+                            Route.PdfOpen -> PdfOpenScreen(
+                                onBack = { goBack() },
+                                onPicked = { replaceRoute(Route.PdfEdit(it)) }
+                            )
+
+                            is Route.Creator -> CreatorScreen(
+                                kind = current.kind,
+                                onBack = { goBack() },
+                                onCreated = { output ->
+                                    refreshLibrary()
+                                    replaceRoute(
+                                        if (output.extension.lowercase() == "pdf") Route.Result(output)
+                                        else Route.Office(output)
+                                    )
+                                }
+                            )
+
                             is Route.Result -> ResultScreen(
                                 file = current.file,
                                 onBack = { goBack() },
@@ -338,6 +369,15 @@ fun RSOfficeApp() {
                             )
 
                             is Route.ScanReview -> ScanReviewScreen(
+                                file = current.file,
+                                onBack = { goBack() },
+                                onDone = { output ->
+                                    refreshLibrary()
+                                    replaceRoute(Route.Result(output))
+                                }
+                            )
+
+                            is Route.PdfEdit -> PdfEditorScreen(
                                 file = current.file,
                                 onBack = { goBack() },
                                 onDone = { output ->
@@ -405,9 +445,10 @@ private fun BottomBar(tab: Int, onTab: (Int) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             TabItem(0, "Home", Icons.Rounded.Home, tab, onTab, Modifier.weight(1f))
-            TabItem(1, "Tools", Icons.Rounded.Apps, tab, onTab, Modifier.weight(1f))
-            TabItem(2, "Files", Icons.Rounded.Folder, tab, onTab, Modifier.weight(1f))
-            TabItem(3, "About", Icons.Rounded.Info, tab, onTab, Modifier.weight(1f))
+            TabItem(1, "Create", Icons.Rounded.Add, tab, onTab, Modifier.weight(1f))
+            TabItem(2, "Tools", Icons.Rounded.Apps, tab, onTab, Modifier.weight(1f))
+            TabItem(3, "Files", Icons.Rounded.Folder, tab, onTab, Modifier.weight(1f))
+            TabItem(4, "About", Icons.Rounded.Info, tab, onTab, Modifier.weight(1f))
         }
     }
 }

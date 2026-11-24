@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Description
@@ -61,7 +62,8 @@ fun HomeScreen(
     onOpenFile: (File) -> Unit,
     onShareFile: (File) -> Unit,
     onOpenLibrary: () -> Unit,
-    onOpenTools: () -> Unit
+    onOpenTools: () -> Unit,
+    onOpenCreate: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -219,10 +221,10 @@ fun HomeScreen(
                 QuickAction("Scan", Icons.Rounded.PhotoCamera, listOf(Indigo, IndigoDeep), onScan)
                 QuickAction("Import", Icons.Rounded.Upload, listOf(Teal, Indigo), onImportPdf)
                 QuickAction(
-                    "Slides",
-                    Icons.Rounded.Slideshow,
-                    listOf(PptOrange, Rose)
-                ) { onOpenOffice(ToolId.SLIDES) }
+                    "New",
+                    Icons.Rounded.Add,
+                    listOf(Indigo, Violet)
+                ) { onOpenCreate() }
                 QuickAction("Files", Icons.Rounded.Folder, listOf(Violet, IndigoDeep), onOpenLibrary)
             }
         }
